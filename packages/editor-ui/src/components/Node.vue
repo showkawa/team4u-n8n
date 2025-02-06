@@ -9,7 +9,6 @@ import {
 	SIMULATE_NODE_TYPE,
 	SIMULATE_TRIGGER_NODE_TYPE,
 	WAIT_NODE_TYPE,
-	WAIT_TIME_UNLIMITED,
 } from '@/constants';
 import type {
 	ExecutionSummary,
@@ -18,7 +17,12 @@ import type {
 	NodeOperationError,
 	Workflow,
 } from 'n8n-workflow';
-import { NodeConnectionType, NodeHelpers, SEND_AND_WAIT_OPERATION } from 'n8n-workflow';
+import {
+	NodeConnectionType,
+	NodeHelpers,
+	SEND_AND_WAIT_OPERATION,
+	WAIT_INDEFINITELY,
+} from 'n8n-workflow';
 import type { StyleValue } from 'vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import xss from 'xss';
@@ -42,7 +46,8 @@ import { getTriggerNodeServiceName } from '@/utils/nodeTypesUtils';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import type { BrowserJsPlumbInstance } from '@jsplumb/browser-ui';
 import { get } from 'lodash-es';
-import { N8nIconButton, useDeviceSupport } from 'n8n-design-system';
+import { N8nIconButton } from 'n8n-design-system';
+import { useDeviceSupport } from '@n8n/composables/useDeviceSupport';
 
 type Props = {
 	name: string;
@@ -345,7 +350,7 @@ const waiting = computed(() => {
 				return i18n.baseText('node.theNodeIsWaitingFormCall');
 			}
 			const waitDate = new Date(workflowExecution.waitTill);
-			if (waitDate.toISOString() === WAIT_TIME_UNLIMITED) {
+			if (waitDate.getTime() === WAIT_INDEFINITELY.getTime()) {
 				return i18n.baseText('node.theNodeIsWaitingIndefinitelyForAnIncomingWebhookCall');
 			}
 			return i18n.baseText('node.nodeIsWaitingTill', {
